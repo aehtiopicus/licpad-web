@@ -10,18 +10,17 @@
 	<groupId>com.aehtiopicus.licpad</groupId>
 	<artifactId>licpad-web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 
 	<properties>
-		<jetty.version>9.3.3.v20150827</jetty.version>
-		<jetty.jsp.version>9.2.13.v20150730</jetty.jsp.version>
+		<jetty.version>8.1.5.v20120716</jetty.version>
+		<jetty.jsp.version>8.1.4.v20120524</jetty.jsp.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.aehtiopicus.licpad</groupId>
 			<artifactId>licpad-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>			
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -63,5 +62,95 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
+	<build>
+  <plugins>
+	      <plugin>
+	      	<groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-source-plugin</artifactId>
+	        <version>2.1.2</version>
+	        <executions>
+	          <execution>
+	            <id>attach-sources</id>
+	            <phase>verify</phase>
+	            <goals>
+	              <goal>jar-no-fork</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
+	      <plugin>
+		     <artifactId>maven-compiler-plugin</artifactId>
+		     <version>2.3.2</version>
+		     <configuration>
+		       <source>1.7</source>
+		       <target>1.7</target>
+		     </configuration>
+		  </plugin>
+	      <plugin> 
+	        <artifactId>maven-eclipse-plugin</artifactId>
+	        <version>2.9</version>
+	        <configuration> 
+	          <downloadSources>true</downloadSources>
+	        </configuration> 
+	      </plugin>
+	      <plugin>
+	        <groupId>org.codehaus.mojo</groupId>
+	        <artifactId>build-helper-maven-plugin</artifactId>
+	        <version>1.9.1</version>
+	        <executions>
+	          <execution>
+	            <id>add-resource</id>
+	            <phase>generate-resources</phase>
+	            <goals>
+	              <goal>add-resource</goal>
+	            </goals>
+	            <configuration>
+	              <resources>
+	                <resource>
+	                  <directory>src/main/java/webapp</directory>
+	                  <targetPath>webapp</targetPath>
+	                </resource>
+	              </resources>
+	            </configuration>
+	          </execution>
+	        </executions>
+	      </plugin>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-shade-plugin</artifactId>
+	        <version>2.1</version>
+	        <executions>
+	          <execution>
+	            <goals>
+	              <goal>shade</goal>
+	            </goals>
+	            <configuration>
+	              <filters>
+	                <filter>
+	                  <artifact>*:*</artifact>
+	                  <excludes>
+	                    <exclude>**/*.DSA</exclude>
+	                    <exclude>**/*.RSA</exclude>
+	                    <exclude>**/*.SF</exclude>
+	                  </excludes>
+	                </filter>
+	              </filters>
+	              <transformers>
+	                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+	                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+	                  <mainClass>com.aehtiopicus.licpad.init.ServerStart</mainClass>
+	                </transformer>
+	                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+	                  <resource>META-INF/spring.handlers</resource>
+	                </transformer>
+	                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+	                  <resource>META-INF/spring.schemas</resource>
+	                </transformer>
+	              </transformers>
+	            </configuration>
+	          </execution>
+	        </executions>
+	      </plugin> 
+	    </plugins> 
+	</build>
 </project>

@@ -18,6 +18,16 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.aehtiopicus.licpad</groupId>
+			<artifactId>licpad-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>			
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
 		<!-- JETTY DEPENDENCIES -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>

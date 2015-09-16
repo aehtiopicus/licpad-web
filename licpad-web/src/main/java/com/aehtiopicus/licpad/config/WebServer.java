@@ -3,21 +3,20 @@ package com.aehtiopicus.licpad.config;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jetty.server.Handler;
+import org.apache.jasper.servlet.JspServlet;
+import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
+import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
+import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.ContextLoaderListener;
@@ -26,170 +25,85 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
- * Example WebServer class which sets up an embedded Jetty 
- * appropriately whether running in an IDE or in "production" 
- * mode in a shaded jar.
+ * Example WebServer class which sets up an embedded Jetty appropriately whether
+ * running in an IDE or in "production" mode in a shaded jar.
  */
-public class WebServer
-{
-    // TODO: You should configure this appropriately for 
-    // your environment
-    private static final String LOG_PATH = "./var/logs/access/yyyy_mm_dd.request.log";
-    private static final String WEB_XML = "webapp/WEB-INF/web.xml";
-    private static final String CLASS_ONLY_AVAILABLE_IN_IDE = "com.sjl.IDE";
-    private static final String PROJECT_RELATIVE_PATH_TO_WEBAPP = "src/main/java/webapp";
-    private static final String CONTEXT_PATH = "/";
-    private static final String CONFIG_LOCATION = "com.aehtiopicus.licpad.config";
-    private static final String MAPPING_URL = "/*";
-    private static final String DEFAULT_PROFILE = "dev";
-    
-    public static interface WebContext
-    {
-        public File getWarPath();
-        public String getContextPath();
-    }
+public class WebServer {
+	// TODO: You should configure this appropriately for
+	// your environment
+	private static final String LOG_PATH = "./var/logs/access/yyyy_mm_dd.request.log";
+	private static final String CONTEXT_PATH = "/lw";
+	private static final String CONFIG_LOCATION = "com.aehtiopicus.licpad.config";
+	private static final String MAPPING_URL = "/*";
+	private static final String DEFAULT_PROFILE = "dev";
 
-    private Server server;
-    private int port;
-    private String bindInterface;
+	public static interface WebContext {
+		public File getWarPath();
 
-    public WebServer(int aPort)
-    {
-        this(aPort, null);
-    }
+		public String getContextPath();
+	}
 
-    public WebServer(int aPort, String aBindInterface)
-    {        
-        port = aPort;
-        bindInterface = aBindInterface;
-    }
+	private Server server;
+	private int port;
 
-    public void start() throws Exception
-    {
-        server = new Server();
-        server.setThreadPool(createThreadPool());        
-        server.addConnector(createConnector());
-        server.setHandler(getServletContextHandler(getContext()));     
-        server.setStopAtShutdown(true);
+	public WebServer(int port) {
+		this.port = port;
+	}
 
-        server.start();       
-    }
+	public void start() throws Exception {
+		server = new Server(this.port);
+		server.setHandler(getServletContextHandler(getContext()));
+		server.setStopAtShutdown(true);
 
-    public void join() throws InterruptedException
-    {
-        server.join();
-    }
+		server.start();
+	}
 
-    public void stop() throws Exception
-    {        
-        server.stop();
-    }
+	public void join() throws InterruptedException {
+		server.join();
+	}
 
-    private ThreadPool createThreadPool()
-    {
-        // TODO: You should configure these appropriately
-        // for your environment - this is an example only
-        QueuedThreadPool _threadPool = new QueuedThreadPool();
-        _threadPool.setMinThreads(10);
-        _threadPool.setMaxThreads(100);
-        return _threadPool;
-    }
+	public void stop() throws Exception {
+		server.stop();
+	}
 
-    private SelectChannelConnector createConnector()
-    {
-        SelectChannelConnector _connector = 
-            new SelectChannelConnector();
-        _connector.setPort(port);
-        _connector.setHost(bindInterface);
-        return _connector;
-    }
+	private static RequestLog createRequestLog() {
+		NCSARequestLog log = new NCSARequestLog();
 
-    private HandlerCollection createHandlers()
-    {                
-        WebAppContext _ctx = new WebAppContext();
-        _ctx.setContextPath("/");
+		File logPath = new File(LOG_PATH);
+		logPath.getParentFile().mkdirs();
 
-        if(isRunningInShadedJar())
-        {          
-            _ctx.setWar(getShadedWarUrl());
-        }
-        else
-        {            
-            _ctx.setWar(PROJECT_RELATIVE_PATH_TO_WEBAPP);
-        }
+		log.setFilename(logPath.getPath());
+		log.setRetainDays(90);
+		log.setExtended(false);
+		log.setAppend(true);
+		log.setLogTimeZone("GMT");
+		log.setLogLatency(true);
+		return log;
+	}
 
-        List<Handler> _handlers = new ArrayList<Handler>();
+	private static ServletContextHandler   getServletContextHandler(
+			WebApplicationContext context) throws IOException {
+		RequestLogHandler log = new RequestLogHandler();
+		log.setRequestLog(createRequestLog());
 
-        _handlers.add(_ctx);
+		ServletContextHandler  contextHandler = new ServletContextHandler ();
+		contextHandler.setErrorHandler(null);
+		contextHandler.setHandler(log);
+		contextHandler.setContextPath(CONTEXT_PATH);
+		contextHandler.addServlet(new ServletHolder(new DispatcherServlet(
+				context)), MAPPING_URL);
+		contextHandler.addEventListener(new ContextLoaderListener(context));
+		contextHandler.setResourceBase(new ClassPathResource("webapp").getURI()
+				.toString());
+		return contextHandler;
+	}
+	
+	
 
-        HandlerList _contexts = new HandlerList();
-        _contexts.setHandlers(_handlers.toArray(new Handler[0]));
-
-        RequestLogHandler _log = new RequestLogHandler();
-        _log.setRequestLog(createRequestLog());
-
-        HandlerCollection _result = new HandlerCollection();
-        _result.setHandlers(new Handler[] {_contexts, _log});
-
-        return _result;
-    }
-
-    private RequestLog createRequestLog()
-    {
-        NCSARequestLog _log = new NCSARequestLog();
-
-        File _logPath = new File(LOG_PATH);
-        _logPath.getParentFile().mkdirs();
-
-        _log.setFilename(_logPath.getPath());
-        _log.setRetainDays(90);
-        _log.setExtended(false);
-        _log.setAppend(true);
-        _log.setLogTimeZone("GMT");
-        _log.setLogLatency(true);
-        return _log;
-    }  
-
-    private boolean isRunningInShadedJar()
-    {
-        try
-        {
-            Class.forName(CLASS_ONLY_AVAILABLE_IN_IDE);
-            return false;
-        }
-        catch(ClassNotFoundException anExc)
-        {
-            return true;
-        }
-    }
-
-    private URL getResource(String aResource)
-    {
-        return Thread.currentThread().
-            getContextClassLoader().getResource(aResource); 
-    }
-
-    private String getShadedWarUrl()
-    {
-        String _urlStr = getResource(WEB_XML).toString();
-        // Strip off "WEB-INF/web.xml"
-        return _urlStr.substring(0, _urlStr.length() - 15);
-    }
-    
-    private static ServletContextHandler getServletContextHandler(WebApplicationContext context) throws IOException {
-        ServletContextHandler contextHandler = new ServletContextHandler();
-        contextHandler.setErrorHandler(null);
-        contextHandler.setContextPath(CONTEXT_PATH);
-        contextHandler.addServlet(new ServletHolder(new DispatcherServlet(context)), MAPPING_URL);
-        contextHandler.addEventListener(new ContextLoaderListener(context));
-        contextHandler.setResourceBase(new ClassPathResource("webapp").getURI().toString());
-        return contextHandler;
-    }
-
-    private static WebApplicationContext getContext() {
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.setConfigLocation(CONFIG_LOCATION);
-        context.getEnvironment().setDefaultProfiles(DEFAULT_PROFILE);
-        return context;
-    }
+	private static WebApplicationContext getContext() {
+		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		context.setConfigLocation(CONFIG_LOCATION);
+		
+		return context;
+	}
 }

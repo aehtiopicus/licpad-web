@@ -8,9 +8,12 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
@@ -21,7 +24,8 @@ public class ApplicationContext extends WebMvcConfigurerAdapter{
 
 	@Bean
 	public ViewResolver viewResolver() {
-		InternalResourceViewResolver vr = new InternalResourceViewResolver();
+		UrlBasedViewResolver vr = new UrlBasedViewResolver();
+		vr.setViewClass(JstlView.class);
 		vr.setPrefix("/WEB-INF/views/");
 		vr.setSuffix(".jsp");
 		return vr;
@@ -36,7 +40,19 @@ public class ApplicationContext extends WebMvcConfigurerAdapter{
 	
 	@Override
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+		super.addResourceHandlers(registry);
 	    registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	    
+	    ResourceHandlerRegistration _res = 
+	    		registry.addResourceHandler("/WEB-INF/views/**");
+	        _res.addResourceLocations(
+	            "classpath:/webapp/WEB-INF/views/");
 	}
+	
+	@Override
+    public void addViewControllers(ViewControllerRegistry aRegistry)
+    {
+        aRegistry.addViewController("/").setViewName("index");
+    }
 
 }

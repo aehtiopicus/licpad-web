@@ -2,20 +2,11 @@ package com.aehtiopicus.licpad.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.jasper.servlet.JspServlet;
-import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
-import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
-import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.core.io.ClassPathResource;
@@ -34,8 +25,7 @@ public class WebServer {
 	private static final String LOG_PATH = "./var/logs/access/yyyy_mm_dd.request.log";
 	private static final String CONTEXT_PATH = "/lw";
 	private static final String CONFIG_LOCATION = "com.aehtiopicus.licpad.config";
-	private static final String MAPPING_URL = "/*";
-	private static final String DEFAULT_PROFILE = "dev";
+	private static final String MAPPING_URL = "/";	
 
 	public static interface WebContext {
 		public File getWarPath();
@@ -81,19 +71,20 @@ public class WebServer {
 		return log;
 	}
 
-	private static ServletContextHandler   getServletContextHandler(
+	private static WebAppContext   getServletContextHandler(
 			WebApplicationContext context) throws IOException {
 		RequestLogHandler log = new RequestLogHandler();
 		log.setRequestLog(createRequestLog());
 
-		ServletContextHandler  contextHandler = new ServletContextHandler ();
+		WebAppContext  contextHandler = new WebAppContext ();
 		contextHandler.setErrorHandler(null);
 		contextHandler.setHandler(log);
 		contextHandler.setContextPath(CONTEXT_PATH);
 		contextHandler.addServlet(new ServletHolder(new DispatcherServlet(
 				context)), MAPPING_URL);
 		contextHandler.addEventListener(new ContextLoaderListener(context));
-		contextHandler.setResourceBase(new ClassPathResource("webapp").getURI()
+		contextHandler.setConfigurationDiscovered(true);		
+		contextHandler.setResourceBase(new ClassPathResource("").getURI()
 				.toString());
 		return contextHandler;
 	}

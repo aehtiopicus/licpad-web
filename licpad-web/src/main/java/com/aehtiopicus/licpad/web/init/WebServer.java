@@ -1,4 +1,4 @@
-package com.aehtiopicus.licpad.init;
+package com.aehtiopicus.licpad.web.init;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,15 +25,20 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.LoggerLog;
+import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebServer
 {
+	
     public static interface WebContext
     {
         public File getWarPath();
@@ -50,13 +55,15 @@ public class WebServer
     
     public void start() throws Exception
     {
+    	
+    	
         server = new Server();
 
         server.setThreadPool(createThreadPool());
         server.addConnector(createConnector());
         server.setHandler(createHandlers());        
         server.setStopAtShutdown(true);
-                
+        
         server.start();
     }
     
@@ -203,7 +210,7 @@ public class WebServer
         _contexts.setHandlers(_handlers.toArray(new Handler[0]));
         
         RequestLogHandler _log = new RequestLogHandler();
-        _log.setRequestLog(createRequestLog());
+        _log.setRequestLog(createRequestLog());        
         
         HandlerCollection _result = new HandlerCollection();
         _result.setHandlers(new Handler[] {_contexts, _log});
@@ -219,7 +226,7 @@ public class WebServer
         _logPath.getParentFile().mkdirs();
                 
         _log.setFilename(_logPath.getPath());
-        _log.setRetainDays(30);
+        _log.setRetainDays(2);
         _log.setExtended(false);
         _log.setAppend(true);
         _log.setLogTimeZone("UTC");

@@ -1,4 +1,4 @@
-package com.aehtiopicus.licpad.config;
+package com.aehtiopicus.licpad.web.config;
 
 import java.util.Properties;
 
@@ -15,15 +15,11 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
-@EnableTransactionManagement
-
-public class PersistenceContext {
-
+public class ApplicationModule{
 
 	@Bean
 	public MultipartResolver multipartResolver() {
@@ -37,7 +33,7 @@ public class PersistenceContext {
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource(restDataSource());
 		factoryBean
-				.setPackagesToScan(new String[] { "com.aehtiopicus.licpad.domain" });
+				.setPackagesToScan(new String[] { "com.aehtiopicus.licpad.core.domain" });
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter() {
 

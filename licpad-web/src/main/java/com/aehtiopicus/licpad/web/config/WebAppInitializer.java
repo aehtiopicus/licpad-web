@@ -1,16 +1,12 @@
-package com.aehtiopicus.licpad.config;
+package com.aehtiopicus.licpad.web.config;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
+import javax.servlet.*;
 
-import org.apache.jasper.servlet.JspServlet;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
-
-
+import org.apache.jasper.servlet.*;
+import org.springframework.web.*;
+import org.springframework.web.context.*;
+import org.springframework.web.context.support.*;
+import org.springframework.web.servlet.*;
 
 public class WebAppInitializer implements WebApplicationInitializer
 {
@@ -27,17 +23,17 @@ public class WebAppInitializer implements WebApplicationInitializer
 	
 	private void registerListener(ServletContext aContext)
 	{
-		AnnotationConfigWebApplicationContext _root = createContext(PersistenceContext.class);
+		AnnotationConfigWebApplicationContext _root = createContext(ApplicationModule.class);
 		aContext.addListener(new ContextLoaderListener(_root));
 	}
 	
 	private void registerDispatcherServlet(ServletContext aContext)
 	{
-		AnnotationConfigWebApplicationContext _ctx = createContext(ApplicationContext.class);
+		AnnotationConfigWebApplicationContext _ctx = createContext(WebModule.class);
 		ServletRegistration.Dynamic _dispatcher = 
 			aContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(_ctx));
 		_dispatcher.setLoadOnStartup(1);
-		_dispatcher.addMapping("/lw");
+		_dispatcher.addMapping("/");
 	}
 	
 	private void registerJspServlet(ServletContext aContext) {

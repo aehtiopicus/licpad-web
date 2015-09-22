@@ -11,5 +11,20 @@
 	<artifactId>licpad-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	
-
+	<properties>
+		<derby.version>10.11.1.1</derby.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+	</dependencies>
 </project>

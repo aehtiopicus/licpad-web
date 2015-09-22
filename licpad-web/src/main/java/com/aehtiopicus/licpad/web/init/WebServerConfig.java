@@ -1,4 +1,4 @@
-package com.aehtiopicus.licpad.init;
+package com.aehtiopicus.licpad.web.init;
 
 public interface WebServerConfig 
 {

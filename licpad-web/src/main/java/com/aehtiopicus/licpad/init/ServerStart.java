@@ -1,6 +1,6 @@
 package com.aehtiopicus.licpad.init;
 
-import com.aehtiopicus.licpad.config.WebServer;
+
 
 public class ServerStart {
 
@@ -13,7 +13,7 @@ public class ServerStart {
     
     public ServerStart()
     {
-        server = new WebServer(8080);        
+        server = new WebServer(WebServerConfig.Factory.newDevelopmentConfig("happy", 8000, "localhost"));        
     }
     
     public void start() throws Exception

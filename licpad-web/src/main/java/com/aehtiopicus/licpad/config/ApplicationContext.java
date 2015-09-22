@@ -4,8 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -16,8 +14,8 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.aehtiopicus.licpad")
-@ImportResource("classpath:/licpad-properties.xml")
+@ComponentScan(basePackages={"com.aehtiopicus.licpad"})
+@ImportResource("classpath:/resources/licpad-properties.xml")
 public class ApplicationContext extends WebMvcConfigurerAdapter{
 	
 
@@ -25,22 +23,19 @@ public class ApplicationContext extends WebMvcConfigurerAdapter{
 	public ViewResolver viewResolver() {
 		UrlBasedViewResolver vr = new UrlBasedViewResolver();
 		vr.setViewClass(JstlView.class);
-		vr.setPrefix("/webapp/WEB-INF/views/");
+		vr.setPrefix("WEB-INF/views/");
 		vr.setSuffix(".jsp");
 		return vr;
 	}
 
-	@Bean
-	public MultipartResolver multipartResolver() {
-		CommonsMultipartResolver cmr = new CommonsMultipartResolver();
-		cmr.setMaxUploadSize(1 * 1024 * 1024 * 1024);// 1gb??
-		return cmr;
-	}
 	
 	@Override
-	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-		super.addResourceHandlers(registry);
-	    registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	public void addResourceHandlers(final ResourceHandlerRegistry aRegistry) {
+		aRegistry.addResourceHandler("/s/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/views/scripts/*");
+		aRegistry.addResourceHandler("/c/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/views/css/*");
+		aRegistry.addResourceHandler("/i/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/views/images/*");
+		aRegistry.addResourceHandler("/WEB-INF/views/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/views/*");		
+	    aRegistry.addResourceHandler("/resources/*").addResourceLocations("classpath:/resources/");
 	    
 	 
 	}

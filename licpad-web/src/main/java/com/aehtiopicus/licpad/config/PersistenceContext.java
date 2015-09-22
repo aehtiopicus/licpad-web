@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -17,12 +16,22 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages="com.aehtiopicus.licpad.repository")
+
 public class PersistenceContext {
 
+
+	@Bean
+	public MultipartResolver multipartResolver() {
+		CommonsMultipartResolver cmr = new CommonsMultipartResolver();
+		cmr.setMaxUploadSize(1 * 1024 * 1024 * 1024);// 1gb??
+		return cmr;
+	}
+	
 	@Bean(name ="entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
@@ -87,7 +96,7 @@ public class PersistenceContext {
 				// use this to inject additional properties in the EntityManager
 				setProperty("hibernate.hbm2ddl.auto", "update");
 				setProperty("hibernate.show_sql","true");
-				setProperty("hibernate.dialect","hibernate.dialect");
+				setProperty("hibernate.dialect","org.hibernate.dialect.DerbyDialect");
 				setProperty("hibernate.format_sql","true");
 			}
 		};

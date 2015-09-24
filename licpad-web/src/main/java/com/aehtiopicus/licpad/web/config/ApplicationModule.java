@@ -15,10 +15,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
+@EnableTransactionManagement
 public class ApplicationModule{
 
 	@Bean
@@ -33,7 +35,7 @@ public class ApplicationModule{
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource(restDataSource());
 		factoryBean
-				.setPackagesToScan(new String[] { "com.aehtiopicus.licpad.core.domain" });
+				.setPackagesToScan(new String[] { "com.aehtiopicus.licpad.core" });
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter() {
 

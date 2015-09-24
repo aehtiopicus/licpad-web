@@ -180,6 +180,12 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-annotations</artifactId>
 			<version>${jetty.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.transaction</artifactId>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- JSP and JSTL SUPPORT -->

@@ -34,6 +34,7 @@ public class WebAppInitializer implements WebApplicationInitializer
 			aContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(_ctx));
 		_dispatcher.setLoadOnStartup(1);
 		_dispatcher.addMapping("/");
+		_dispatcher.setInitParameter("throwExceptionIfNoHandlerFound", "true");
 	}
 	
 	private void registerJspServlet(ServletContext aContext) {

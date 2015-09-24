@@ -2,6 +2,7 @@ package com.aehtiopicus.licpad.web.init;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -25,16 +26,11 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.LoggerLog;
-import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebServer
 {
@@ -98,7 +94,8 @@ public class WebServer
     {       	    	
         WebAppContext _ctx = new WebAppContext();
         _ctx.setContextPath("/lw");
-        _ctx.setBaseResource(Resource.newClassPathResource("META-INF/webapp"));        
+        _ctx.setBaseResource(Resource.newClassPathResource("META-INF/webapp"));              
+        
         
 		_ctx.setConfigurations (new Configuration []
 		{

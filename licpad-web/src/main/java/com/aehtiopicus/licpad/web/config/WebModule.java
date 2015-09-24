@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -28,11 +29,12 @@ public class WebModule extends WebMvcConfigurerAdapter
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry aRegistry)
 	{
-		aRegistry.addResourceHandler("/s/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/view/scripts/*");
-		aRegistry.addResourceHandler("/c/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/view/css/*");
-		aRegistry.addResourceHandler("/i/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/view/images/*");
-		aRegistry.addResourceHandler("/WEB-INF/view/**").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/view/*");
-		aRegistry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
+		aRegistry.addResourceHandler("/js/**").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/js/");
+		aRegistry.addResourceHandler("/css/**").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/css/");
+		aRegistry.addResourceHandler("/img/**").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/images/");
+		aRegistry.addResourceHandler("/WEB-INF/view/*").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/view/*");
+		aRegistry.addResourceHandler("/lw/favicon.ico").addResourceLocations("classpath:/META-INF/webapp/WEB-INF/images/favicon.ico"); 
+		aRegistry.addResourceHandler("/resources/*").addResourceLocations("classpath:/resources/");
 	}
 	
 	@Bean
@@ -40,8 +42,10 @@ public class WebModule extends WebMvcConfigurerAdapter
 	{
 		UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
 		viewResolver.setViewClass(JstlView.class);
-		viewResolver.setPrefix("WEB-INF/view/");
+		viewResolver.setPrefix("/WEB-INF/view/");
 		viewResolver.setSuffix(".jsp");
 		return viewResolver;
 	}
+	
+
 }

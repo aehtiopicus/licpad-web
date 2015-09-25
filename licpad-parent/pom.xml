@@ -24,7 +24,7 @@
 		<log4j-version>1.2.17</log4j-version>
 		<cglib.version>2.2.2</cglib.version>
 		<org.springframework-version>4.1.6.RELEASE</org.springframework-version>
-		
+		<org.springframework.data-version>1.7.2.RELEASE</org.springframework.data-version>
 		<spring-security.version>4.0.0.RELEASE</spring-security.version>
 		<org.aspectj-version>1.8.5</org.aspectj-version>
 		<joda-time-version>2.2</joda-time-version>
@@ -126,7 +126,11 @@
 			</exclusions>
 		</dependency>
 	
-
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${org.springframework.data-version}</version>
+		</dependency>
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>

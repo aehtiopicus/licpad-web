@@ -4,8 +4,12 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -20,11 +24,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.aehtiopicus.licpad.core.utils.PropertiesReader;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages="com.aehtiopicus.licpad.core.repository")
 public class ApplicationModule{
 
+	private static final String DERBY_STATUS = PropertiesReader.getInstance().readProperty("derby.create_db");
+	
+	@Autowired
+	private ApplicationContext ap;
+	
 	@Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver cmr = new CommonsMultipartResolver();
@@ -58,7 +69,7 @@ public class ApplicationModule{
 	public DataSource restDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-		dataSource.setUrl("jdbc:derby:db/LICCPaDDB;create=true");
+		dataSource.setUrl("jdbc:derby:db/LICCPaDDB;create="+DERBY_STATUS);
 		dataSource.setUsername("lw");
 		dataSource.setPassword("lw");		
 		return dataSource;

@@ -2,6 +2,11 @@ package com.aehtiopicus.licpad.web.init;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.configuration.ConfigurationException;
+
+import com.aehtiopicus.licpad.core.utils.Initializer;
+import com.aehtiopicus.licpad.core.utils.PropertiesReader;
+
 public class Main
 {
 	
@@ -15,6 +20,14 @@ public class Main
 	
 	public static Main getInstance(){
 		if(main== null){
+			PropertiesReader pr = PropertiesReader.getInstance();
+			if(pr.readProperty("derby.create_db") == null){
+				try {
+					Initializer.getInstance().initConfigurationFile();
+				} catch (ConfigurationException e) {
+					e.printStackTrace();
+				}
+			}
 			main = new Main();
 		}
 		return main;
@@ -32,9 +45,11 @@ public class Main
     public void start() throws Exception
     {
     	if(!isRunning){
-    		server.start();        
+    		server.start();
+    		isRunning = true;
+        	Initializer.getInstance().markConfigurationAsRead();
         	server.join();
-        	isRunning = true;
+        	
     	}
     }
     

@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import com.aehtiopicus.licpad.core.utils.ExternalProperties;
 import com.aehtiopicus.licpad.core.utils.Initializer;
 import com.aehtiopicus.licpad.core.utils.PortScanner;
 import com.aehtiopicus.licpad.core.utils.PropertiesReader;
@@ -21,7 +22,7 @@ public class Main {
 	public static Main getInstance() {
 		if (main == null) {
 			PropertiesReader pr = PropertiesReader.getInstance();
-			if (pr.readProperty("derby.create_db") == null) {
+			if (pr.readProperty(ExternalProperties.DERYB_CREATE_DB) == null) {
 				try {
 					Initializer.getInstance().initConfigurationFile();
 				} catch (ConfigurationException e) {
@@ -37,7 +38,7 @@ public class Main {
 
 	private Main() {
 
-		System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
+		System.setProperty(ExternalProperties.JETTY_COMPILATION_DISSABLE, "true");
 
 		server = new WebServer(WebServerConfig.Factory.newDevelopmentConfig(
 				"Licpad-main", getPort(), "localhost"));
@@ -46,7 +47,7 @@ public class Main {
 	private int getPort() {
 		int port = -1;
 		try {
-			port = PropertiesReader.getInstance().readInt("server.port");
+			port = PropertiesReader.getInstance().readInt(ExternalProperties.LICPAD_SERVER_PORT);
 			if (!PortScanner.isPortAvailable(port)) {
 				throw new Exception();
 			}

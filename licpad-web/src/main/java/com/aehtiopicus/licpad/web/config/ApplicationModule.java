@@ -24,14 +24,39 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.aehtiopicus.licpad.core.utils.ExternalProperties;
 import com.aehtiopicus.licpad.core.utils.PropertiesReader;
 
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages="com.aehtiopicus.licpad.core.repository")
+@ImportResource("classpath:/resources/licpad-properties.xml")
 public class ApplicationModule{
 
-	private static final String DERBY_STATUS = PropertiesReader.getInstance().readProperty("derby.create_db");
+	private static final String DERBY_STATUS = PropertiesReader.getInstance().readProperty(ExternalProperties.DERYB_CREATE_DB);
+	
+	private static final String DERBY_USER = "#{lpProperties['derby.user']}";
+	private static final String DERBY_PASSWORD = "#{lpProperties['derby.passwd']}";
+	private static final String DERBY_DRIVER = "#{lpProperties['derby.driver']}";
+	private static final String DERBY_URL = "#{lpProperties['derby.url']}";
+	private static final String DERBY_DIALECT = "#{lpProperties['derby.dialect']}";
+	
+	@Value(DERBY_USER)
+	private String dbUser;
+	
+	@Value(DERBY_PASSWORD)
+	private String dbPasswd;
+	
+	@Value(DERBY_DRIVER)
+	private String dbDriver;
+	
+	@Value(DERBY_URL)
+	private String dbUrl;
+	
+	@Value(DERBY_DIALECT)
+	private String dbDialect;
+	
+
 	
 	@Autowired
 	private ApplicationContext ap;
@@ -68,10 +93,10 @@ public class ApplicationModule{
 	@Bean(name = "dataSource")
 	public DataSource restDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-		dataSource.setUrl("jdbc:derby:db/LICCPaDDB;create="+DERBY_STATUS);
-		dataSource.setUsername("lw");
-		dataSource.setPassword("lw");		
+		dataSource.setDriverClassName(dbDriver);
+		dataSource.setUrl(dbUrl+";create="+DERBY_STATUS);
+		dataSource.setUsername(dbUser);
+		dataSource.setPassword(dbPasswd);		
 		return dataSource;
 	}
 
@@ -107,7 +132,7 @@ public class ApplicationModule{
 				// use this to inject additional properties in the EntityManager
 				setProperty("hibernate.hbm2ddl.auto", "update");
 				setProperty("hibernate.show_sql","true");
-				setProperty("hibernate.dialect","org.hibernate.dialect.DerbyDialect");
+				setProperty("hibernate.dialect",dbDialect);
 				setProperty("hibernate.format_sql","true");
 			}
 		};

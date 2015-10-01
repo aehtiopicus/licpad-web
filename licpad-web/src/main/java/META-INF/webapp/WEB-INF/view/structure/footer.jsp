@@ -7,14 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-<script src="<%=request.getContextPath()%>/js/jquery-1.10.1.min.js"></script>
-<span>SERVER INITIAL CONFIGURATION HAS BEEN DELETED</span>
-<br/>
-<span>SERVER IS STOPPING</span>
-<script>
-function a(){
-	
-}
-</script>
+
 </body>
 </html>

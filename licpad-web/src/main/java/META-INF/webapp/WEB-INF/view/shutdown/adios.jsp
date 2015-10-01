@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<script src="/js/jquery-1.10.1.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/libs/jquery-1.10.1.min.js"></script>
 <span>SERVER IS STOPPING</span>
 <script>
 function a(){

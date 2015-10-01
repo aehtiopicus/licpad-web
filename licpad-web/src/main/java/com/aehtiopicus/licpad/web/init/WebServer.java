@@ -34,7 +34,10 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class WebServer
 {
 	
-    public static interface WebContext
+    private static final String WEBAPP_PATH = "META-INF/webapp";
+	private static final String SERVER_PATH = "/lw";
+
+	public static interface WebContext
     {
         public File getWarPath();
         public String getContextPath();
@@ -92,8 +95,8 @@ public class WebServer
     private HandlerCollection createHandlers()
     {       	    	
         WebAppContext _ctx = new WebAppContext();
-        _ctx.setContextPath("/lw");
-        _ctx.setBaseResource(Resource.newClassPathResource("META-INF/webapp"));              
+        _ctx.setContextPath(SERVER_PATH);
+        _ctx.setBaseResource(Resource.newClassPathResource(WEBAPP_PATH));              
         
         
 		_ctx.setConfigurations (new Configuration []

@@ -27,6 +27,7 @@ public class Home {
 	@RequestMapping("/")
 	public ModelAndView home()
 	{		
+		
 		log.error("home");
 		Cursos c = p.saveCurso();
 		p.savePersona(c);

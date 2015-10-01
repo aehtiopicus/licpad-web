@@ -30,7 +30,7 @@ public class Initializer {
     
     public void initConfigurationFile() throws ConfigurationException {
         prepareConfiguration();
-        config.setProperty("first_run", new SimpleDateFormat("yyyy/MM/dd").format(new java.util.Date()));
+        config.setProperty("first_run", new SimpleDateFormat("yyyy\\MM\\dd").format(new java.util.Date()));
         defaultConfiguration(true);
         config.save();
         PropertiesReader.getInstance().reloadProperties();
@@ -59,4 +59,16 @@ public class Initializer {
         config.setProperty("derby.create_db", created);        
         config.save();
     }
+    
+	public void updatePort(int port) throws ConfigurationException {
+
+		 config.setProperty("server.port", port);
+		 config.save();
+		
+	}
+	public void removePort() throws ConfigurationException{
+		config.clearProperty("server.port");
+		 config.save();
+		
+	}
 }

@@ -56,7 +56,7 @@ public class PropertiesReader {
            File propertiesFile = new File(System.getProperty("user.dir") + File.separatorChar + "licpad.ini");
            prop = new Properties();
            is = PropertiesReader.class.getResourceAsStream(
-                   "/resources/licpad.properties");
+                   "/licpad.properties");
            if (is == null) {
                throw new Exception();
            }

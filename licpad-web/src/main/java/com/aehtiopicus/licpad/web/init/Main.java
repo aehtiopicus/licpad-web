@@ -1,5 +1,10 @@
 package com.aehtiopicus.licpad.web.init;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
@@ -14,6 +19,7 @@ public class Main {
 
 	private static Main main;
 	private boolean isRunning = false;
+	private WebServer server;
 
 	public static void main(String... anArgs) throws Exception {
 		Main.getInstance().start();
@@ -34,14 +40,14 @@ public class Main {
 		return main;
 	}
 
-	private WebServer server;
 
 	private Main() {
 
 		System.setProperty(ExternalProperties.JETTY_COMPILATION_DISSABLE, "true");
 
-		server = new WebServer(WebServerConfig.Factory.newDevelopmentConfig(
-				"Licpad-main", getPort(), "localhost"));
+		/*server = new WebServer(WebServerConfig.Factory.newDevelopmentConfig(
+				"Licpad-main", getPort(), "localhost"));*/
+		server = new WebServer();
 	}
 
 	private int getPort() {
@@ -88,7 +94,7 @@ public class Main {
 			if (counter == 0) {
 				JOptionPane
 						.showMessageDialog(null,
-								"UNABLE TO START SERVER ALL REQUESTED PORTS ARE IN USE");
+								"UNABLE TO START SERVER. ALL REQUESTED PORTS ARE IN USE");
 				System.exit(1);
 			}
 			String value = JOptionPane.showInputDialog(null,
@@ -109,31 +115,52 @@ public class Main {
 
 	public void start() throws Exception {
 		if (!isRunning) {
+			server.setPort(getPort());
 			server.start();
 			isRunning = true;
 			Initializer.getInstance().markConfigurationAsRead();
+			
+			if(Desktop.isDesktopSupported())
+			{
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							Desktop.getDesktop().browse(new URI("http://localhost:"+server.getPort()+"/index.html"));
+						} catch (IOException | URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}).start();
+			  
+			}
 			server.join();
 
 		}
 	}
 
 	public void killServer() {
-		new th(server).start();
+		new th(server,false).start();
 	}
 
 	class th extends Thread {
 		private WebServer server;
-
-		public th(WebServer server) {
+		private Boolean restart;
+		public th(WebServer server,boolean restart) {
 			this.server = server;
+			this.restart = restart;
 		}
+		
 
 		@Override
 		public void run() {
 			try {
 				Thread.currentThread();
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 				server.stop();
+				if(restart){
+					restart();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -143,13 +170,17 @@ public class Main {
 		}
 	}
 
-	public void killServerAndReset() {
+	public void killServerAndReset() {		
+		new th(server,true).start();
+	}
+	
+	private void restart(){
 		try {
-			Initializer.getInstance().removePort();
-		} catch (ConfigurationException e) {
+			this.isRunning = false;
+			start();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		new th(server).start();
 	}
 }

@@ -1,4 +1,4 @@
-package com.aehtiopicus.licpad.web.config;
+package com.aehtiopicus.licpad.web.config.server;
 
 import java.util.Properties;
 
@@ -30,7 +30,7 @@ import com.aehtiopicus.licpad.core.utils.PropertiesReader;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages="com.aehtiopicus.licpad.core.repository")
-@ImportResource("classpath:/resources/licpad-properties.xml")
+@ImportResource("classpath:/licpad-properties.xml")
 public class ApplicationModule{
 
 	private static final String DERBY_STATUS = PropertiesReader.getInstance().readProperty(ExternalProperties.DERYB_CREATE_DB);

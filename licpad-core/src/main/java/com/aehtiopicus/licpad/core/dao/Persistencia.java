@@ -22,10 +22,10 @@ public class Persistencia {
 	 @PersistenceContext
 	 private EntityManager em ;
 	 
-//	 @PersistenceUnit(unitName = "entityManagerFactory")
+	 @PersistenceUnit(unitName = "entityManagerFactory")
 	 public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory){
-//		this.entityManagerFactory = entityManagerFactory;
-//		this.em = entityManagerFactory.createEntityManager();
+		this.entityManagerFactory = entityManagerFactory;
+		this.em = entityManagerFactory.createEntityManager();
 	 }
 	 
 
